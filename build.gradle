@@ -18,9 +18,8 @@ compileJava.options.encoding = "UTF-8"
 repositories
 {
 	jcenter()
-	maven {
-      url 'http://maven.syl2010.fr/artifactory/Public/'
-    }
+	maven { url 'http://maven.syl2010.fr/artifactory/Public/' }
+	maven { url = uri('https://maven.pkg.github.com/az-0/Utilities') }
 }
 
 dependencies
@@ -30,6 +29,9 @@ dependencies
 	testImplementation 'junit:junit:4.12'
 
 	implementation group: 'fr.syl2010', name: 'Utils', version: '1.4'
+	
+	//Little parsing api
+	compile 'fr.az.util:Utilities:1.0'
 }
 
 // Define the main class for the application
