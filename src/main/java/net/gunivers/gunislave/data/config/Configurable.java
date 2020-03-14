@@ -8,8 +8,7 @@ import java.io.Serializable;
  * @see Configuration
  * @see ConfigurationNode
  */
-@FunctionalInterface
-public interface ConfigurationHolder extends Serializable
+public interface Configurable extends Serializable
 {
 	/**
 	 * @return this Object's configuration nicely wrapped because of accessibility issues

@@ -2,6 +2,7 @@ package net.gunivers.gunislave.data.config;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -16,8 +17,16 @@ public final class WrappedConfiguration implements Serializable
 	private final Map<String, ConfigurationTree> unmodifiable;
 
 	/**
+	 * Get an empty wrapped configuration ready for usage.
+	 */
+	public WrappedConfiguration()
+	{
+		this(new HashMap<>());
+	}
+
+	/**
 	 * The provided map acts as a pointer, hence should not be immutable
-	 * @param configuration a mutable Map
+	 * @param configuration a mutable {@linkplain Map}
 	 */
 	public WrappedConfiguration(Map<String, ConfigurationTree> configuration)
 	{

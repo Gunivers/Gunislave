@@ -1,6 +1,4 @@
-package net.gunivers.gunislave.data.permission.custom;
-
-import net.gunivers.gunislave.data.permission.Permissions;
+package net.gunivers.gunislave.data.permission;
 
 public class CustomPermission extends PermissionNode implements Permissions
 {

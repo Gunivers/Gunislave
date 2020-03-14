@@ -1,8 +1,8 @@
-package net.gunivers.gunislave.data.permission.custom;
+package net.gunivers.gunislave.data.permission;
 
 import java.util.Map;
 
-public class RootNode extends PermissionNode
+public final class RootNode extends PermissionNode
 {
 	private static final long serialVersionUID = -1262134563083325167L;
 
