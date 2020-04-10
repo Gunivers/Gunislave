@@ -13,8 +13,8 @@ public final class WrappedConfiguration implements Serializable
 {
 	private static final long serialVersionUID = 5143137244967080956L;
 
-	private final Map<String, ConfigurationTree> config;
-	private final Map<String, ConfigurationTree> unmodifiable;
+	private final Map<String, ConfigurationRoot> config;
+	private final Map<String, ConfigurationRoot> unmodifiable;
 
 	/**
 	 * Get an empty wrapped configuration ready for usage.
@@ -28,7 +28,7 @@ public final class WrappedConfiguration implements Serializable
 	 * The provided map acts as a pointer, hence should not be immutable
 	 * @param configuration a mutable {@linkplain Map}
 	 */
-	public WrappedConfiguration(Map<String, ConfigurationTree> configuration)
+	public WrappedConfiguration(Map<String, ConfigurationRoot> configuration)
 	{
 		this.config = configuration;
 		this.unmodifiable = Collections.unmodifiableMap(this.config);
@@ -37,12 +37,12 @@ public final class WrappedConfiguration implements Serializable
 	/**
 	 * @return a mutable {@linkplain Map} containing the configuration
 	 */
-	Map<String, ConfigurationTree> get() { return this.config; }
+	Map<String, ConfigurationRoot> get() { return this.config; }
 
 	/**
 	 * This method return an immutable {@linkplain Map}. As it is backed by the provided Map, changes into the latter are reflected into the
 	 * immutable one.
 	 * @return an immutable Map
 	 */
-	public Map<String, ConfigurationTree> asMap() { return this.unmodifiable; }
+	public Map<String, ConfigurationRoot> asMap() { return this.unmodifiable; }
 }

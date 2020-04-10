@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.gunivers.gunislave.util.TriConsumer;
+import net.gunivers.gunislave.util.trees.Node;
 
 import fr.az.util.parsing.ParsingException;
 import fr.az.util.parsing.SimpleParser;
@@ -36,7 +37,7 @@ public class Configuration<T> extends ConfigurationNode
 	public static final String TYPE_MAP = "Map";
 	public static final String TYPE_SNOWFLAKE = "ID";
 
-	private final Set<TriConsumer<Configuration<T>, T, T>> onValueChanged = new HashSet<>();
+	private final Set<TriConsumer<Configuration<T>, T, T>> onValueChanged;
 	private final SimpleParser<T, ? extends ParsingException> parser;
 	private final String type;
 
@@ -53,12 +54,15 @@ public class Configuration<T> extends ConfigurationNode
 	 * @see ConfigurationNode#createConfiguration(String, Parser, String, T)
 	 * @see ConfigurationNode#ConfigurationNode(ConfigurationNode, String)
 	 */
-	Configuration(ConfigurationNode parent, String name, SimpleParser<T, ? extends ParsingException> parser, String type, T value)
+	Configuration(Node<ConfigurationNode> parent, String name, SimpleParser<T, ? extends ParsingException> parser, String type, T value)
 	{
 		super(parent, name);
+		this.onValueChanged = new HashSet<>();
 		this.parser = parser;
 		this.type = type;
-		this.defaultValue = this.value = value;
+
+		this.defaultValue = value;
+		this.value = value;
 	}
 
 	/**
@@ -78,7 +82,7 @@ public class Configuration<T> extends ConfigurationNode
 	 * @param old the old value
 	 * @param val the new value
 	 */
-	protected void notifyValueChanged(T old, T val) { this.onValueChanged.forEach(tc -> tc.accept(this, old, val)); }
+	private void onValueChanged(T old, T val) { this.onValueChanged.forEach(tc -> tc.accept(this, old, val)); }
 
 	/**
 	 * Set this configuration default value. This won't trigger the registered consumers for value modification
@@ -90,7 +94,7 @@ public class Configuration<T> extends ConfigurationNode
 	 * Set this configuration's value to specified. This will trigger the registered consumers for value modification
 	 * @param value the new value
 	 */
-	public void setValue(T value) { this.notifyValueChanged(this.value, value); this.value = value; }
+	public void setValue(T value) { this.onValueChanged(this.value, value); this.value = value; }
 
 	/**
 	 * Try to parse a value from String, then set this configuration's value to the parsed one.
@@ -146,5 +150,6 @@ public class Configuration<T> extends ConfigurationNode
 	/**
 	 * @return <code>this</code>
 	 */
+	@SuppressWarnings("unchecked")
 	@Override public Configuration<T> asConfiguration() { return this; }
 }

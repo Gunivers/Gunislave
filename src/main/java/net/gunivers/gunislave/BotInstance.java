@@ -25,15 +25,15 @@ public class BotInstance
 	{
 		this.config = config;
 
-		if (config.token == null)
+		if (config.getToken() == null)
 			throw new IllegalArgumentException("Vous devez indiquez votre token en argument !");
 		else
 		{
 			System.out.println("Build Discord Client...");
-			DiscordClientBuilder builder = new DiscordClientBuilder(config.token);
+			DiscordClientBuilder builder = new DiscordClientBuilder(config.getToken());
 
 			// En cas de déconnection imprévue, tente de se reconnecter à l'infini (1000 fois de suite)
-			builder.setRetryOptions(new RetryOptions(Duration.ofSeconds(30), Duration.ofMinutes(1), 1000, Schedulers.single()));
+			builder.setRetryOptions(new RetryOptions(Duration.ofSeconds(30), Duration.ofMinutes(1), Integer.MAX_VALUE, Schedulers.single()));
 			builder.setInitialPresence(Presence.doNotDisturb(Activity.watching("Démarrage...")));
 			this.botClient = builder.build();
 
@@ -64,26 +64,22 @@ public class BotInstance
 	 * ATTENTION : Tout les threads créé par le bot sont des daemons. Si le thread
 	 * principal meurt, la jvm s'arrète !
 	 */
-	public void loginSubscribe() {
-	if (!this.botClient.isConnected())
-		this.botClient.login().subscribe();
-	else
-		throw new IllegalStateException("The client is already connected!");
+	public void loginSubscribe()
+	{
+		if (!this.botClient.isConnected())
+			this.botClient.login().subscribe();
+		else
+			throw new IllegalStateException("The client is already connected!");
 	}
 
-	public void shutdown() {
-	if (this.botClient.isConnected()) {
-
-	} else
-		throw new IllegalStateException("The client is not connected!");
+	public void shutdown()
+	{
+		if (this.botClient.isConnected())
+			this.botClient.logout().subscribe();
+		else
+			throw new IllegalStateException("The client is not connected!");
 	}
 
-	public DiscordClient getBotClient() {
-	return this.botClient;
-	}
-
-	public BotConfig getConfig() {
-	return this.config;
-	}
-
+	public DiscordClient getBotClient() { return this.botClient; }
+	public BotConfig getConfig() { return this.config; }
 }

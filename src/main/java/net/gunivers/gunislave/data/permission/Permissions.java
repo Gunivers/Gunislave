@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.gunivers.gunislave.util.trees.RootManager;
+
 import discord4j.core.object.util.Permission;
 
 public interface Permissions
@@ -21,7 +23,7 @@ public interface Permissions
 		}
 	});
 
-	CustomPermissionManager CUSTOM = new CustomPermissionManager();
+	RootManager<PermissionNode, PermissionRoot> CUSTOM = new RootManager<>(PermissionRoot::new);
 
 	int getLevel();
 

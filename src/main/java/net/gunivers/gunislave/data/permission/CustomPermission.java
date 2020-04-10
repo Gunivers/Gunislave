@@ -1,12 +1,14 @@
 package net.gunivers.gunislave.data.permission;
 
+import net.gunivers.gunislave.util.trees.Node;
+
 public class CustomPermission extends PermissionNode implements Permissions
 {
 	private static final long serialVersionUID = 2065849983131455447L;
 
 	private final int level;
 
-	CustomPermission(PermissionNode parent, String localName, int level)
+	CustomPermission(Node<PermissionNode> parent, String localName, int level)
 	{
 		super(parent, localName);
 		this.level = level;
