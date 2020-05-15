@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A WrappedConfiguration is to be instanciated when a class from the configuration system needs writing access to the configuration map;
+ * A WrappedConfiguration provides write access to configuration to the system without leaking mutability.
  * @author A~Z
  */
 public final class WrappedConfiguration implements Serializable
@@ -25,7 +25,7 @@ public final class WrappedConfiguration implements Serializable
 	}
 
 	/**
-	 * The provided map acts as a pointer, hence should not be immutable
+	 * Constructor provided for control over the configuration.
 	 * @param configuration a mutable {@linkplain Map}
 	 */
 	public WrappedConfiguration(Map<String, ConfigurationRoot> configuration)

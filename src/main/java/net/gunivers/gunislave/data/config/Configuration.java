@@ -39,7 +39,7 @@ public class Configuration<T> extends ConfigurationNode
 
 	private final Set<TriConsumer<Configuration<T>, T, T>> onValueChanged;
 	private final SimpleParser<T, ? extends ParsingException> parser;
-	private final String type;
+	private final String display;
 
 	private T defaultValue;
 	private T value;
@@ -49,17 +49,17 @@ public class Configuration<T> extends ConfigurationNode
 	 * @param parent this node's parent
 	 * @param name this node's String identifier
 	 * @param parser this configuration's parser: used to parse values from String
-	 * @param type this configuration's display type: as it is displayed to the user, it should be as clear as possible
+	 * @param display this configuration's display type: as it is displayed to the user, it should be as clear as possible
 	 * @param value this configuration's default value
 	 * @see ConfigurationNode#createConfiguration(String, Parser, String, T)
 	 * @see ConfigurationNode#ConfigurationNode(ConfigurationNode, String)
 	 */
-	Configuration(Node<ConfigurationNode> parent, String name, SimpleParser<T, ? extends ParsingException> parser, String type, T value)
+	Configuration(Node<ConfigurationNode> parent, String name, SimpleParser<T, ? extends ParsingException> parser, String display, T value)
 	{
 		super(parent, name);
 		this.onValueChanged = new HashSet<>();
 		this.parser = parser;
-		this.type = type;
+		this.display = display;
 
 		this.defaultValue = value;
 		this.value = value;
@@ -134,7 +134,7 @@ public class Configuration<T> extends ConfigurationNode
 	public SimpleParser<T, ? extends ParsingException> getParser() { return this.parser; }
 
 	/** @return this configuration's displayed type */
-	public String getType() { return this.type; }
+	public String getDisplayedType() { return this.display; }
 
 	/** @return this configuration's default value */
 	public T getDefaultValue() { return this.defaultValue; }

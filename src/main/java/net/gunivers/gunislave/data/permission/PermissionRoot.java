@@ -4,6 +4,10 @@ import java.util.Map;
 
 import net.gunivers.gunislave.util.trees.RootNode;
 
+/**
+ * {@linkplain RootNode} implementation for permission trees.
+ * @author AZ
+ */
 public final class PermissionRoot extends RootNode<PermissionNode>
 {
 	private static final long serialVersionUID = -1262134563083325167L;
@@ -17,7 +21,4 @@ public final class PermissionRoot extends RootNode<PermissionNode>
 	{
 		super(name, children, PermissionNode::new);
 	}
-
-	@Override public boolean isRoot() { return true; }
-	@Override public PermissionRoot asRoot() { return this; }
 }

@@ -25,6 +25,18 @@ public interface Permissions
 
 	RootManager<PermissionNode, PermissionRoot> CUSTOM = new RootManager<>(PermissionRoot::new);
 
+	/**
+	 * Part of the visitor pattern; the implementation should only call the corresponding PermissionHolder.grant(Permissions) method
+	 * @param holder a {@linkplain Permissible}
+	 */
+	void grant(Permissible holder);
+
+	/**
+	 * Part of the visitor pattern; the implementation should only call the corresponding PermissionHolder.revoke(Permissions) method
+	 * @param holder a {@linkplain Permissible}
+	 */
+	void revoke(Permissible holder);
+
 	int getLevel();
 
 	default boolean isDiscordPermission() { return false; }

@@ -2,6 +2,10 @@ package net.gunivers.gunislave.data.permission;
 
 import discord4j.core.object.util.Permission;
 
+/**
+ * An overlay for manipulating discord base permissions.
+ * @author AZ
+ */
 public final class DiscordPermission implements Permissions
 {
 	private final Permission handle;
@@ -27,6 +31,9 @@ public final class DiscordPermission implements Permissions
 	}
 
 	public Permission getHandle() { return this.handle; }
+
+	@Override public void grant(Permissible holder) { holder.grant(this); }
+	@Override public void revoke(Permissible holder) { holder.revoke(this); }
 
 	@Override
 	public int getLevel()

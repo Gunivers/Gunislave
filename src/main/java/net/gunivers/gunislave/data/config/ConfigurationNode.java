@@ -1,6 +1,7 @@
 package net.gunivers.gunislave.data.config;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import net.gunivers.gunislave.util.trees.Node;
 import net.gunivers.gunislave.util.trees.NodeFactory;
@@ -57,25 +58,20 @@ public class ConfigurationNode extends Node<ConfigurationNode> implements Serial
 	 */
 	public <T> Configuration<T> getOrNewConfiguration(String localName, SimpleParser<T, ? extends ParsingException> parser, String type, T value)
 	{
-		Configuration<T> child = this.getConfiguration(localName);
+		Optional<Configuration<T>> child = this.getConfiguration(localName);
 
-		if (child == null)
+		if (!child.isPresent())
 			return new Configuration<>(this.getParent(), localName, parser, type, value);
 
-		return child;
+		return child.get();
 	}
 
 	/**
 	 * @return this node's child as a configuration, or null if it doesn't exist or is a simple node
 	 */
-	public <T> Configuration<T> getConfiguration(String localName)
+	public <T> Optional<Configuration<T>> getConfiguration(String localName)
 	{
-		ConfigurationNode child = this.getChild(localName);
-
-		if (child == null)
-			return null;
-
-		return child.asConfiguration();
+		return this.getChild(localName).filter(ConfigurationNode::isConfiguration).map(ConfigurationNode::asConfiguration);
 	}
 
 	/**

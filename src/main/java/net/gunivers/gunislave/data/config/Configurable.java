@@ -3,7 +3,7 @@ package net.gunivers.gunislave.data.config;
 import java.io.Serializable;
 
 /**
- * An interface which represents a configurable Object.
+ * An interface which represents a object holding configuration.
  * @author AZ
  * @see Configuration
  * @see ConfigurationNode
@@ -11,7 +11,7 @@ import java.io.Serializable;
 public interface Configurable extends Serializable
 {
 	/**
-	 * @return this Object's configuration nicely wrapped because of accessibility issues
+	 * @return this Configurable's configuration as a {@linkplain WrappedConfiguration}.
 	 */
 	WrappedConfiguration getConfiguration();
 }

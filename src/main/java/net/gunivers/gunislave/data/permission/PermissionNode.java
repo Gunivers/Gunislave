@@ -1,8 +1,14 @@
 package net.gunivers.gunislave.data.permission;
 
+import java.util.Optional;
+
 import net.gunivers.gunislave.util.trees.Node;
 import net.gunivers.gunislave.util.trees.NodeFactory;
 
+/**
+ * Core {@linkplain Node} implementation for permission trees.
+ * @author AZ
+ */
 public class PermissionNode extends Node<PermissionNode>
 {
 	private static final long serialVersionUID = 2065849983131455447L;
@@ -19,26 +25,22 @@ public class PermissionNode extends Node<PermissionNode>
 
 	public CustomPermission getOrNewPermission(String localName, int level)
 	{
-		CustomPermission child = this.getPermission(localName);
+		Optional<CustomPermission> child = this.getPermission(localName);
 
-		if (child == null)
+		if (!child.isPresent())
 			return new CustomPermission(this.getParent(), localName, level);
 
-		return child;
+		return child.get();
 	}
 
-	public CustomPermission getPermission(String localName)
+	public Optional<CustomPermission> getPermission(String localName)
 	{
-		PermissionNode child = this.getChild(localName);
-
-		if (child == null)
-			return null;
-
-		return child.asCustomPermission();
+		return this.getChild(localName).filter(PermissionNode::isCustomPermission).map(PermissionNode::asCustomPermission);
 	}
 
-	/** @return wether this node is a permission */
+	/** @return wether this node is a permission. */
 	public boolean isCustomPermission() { return false; }
-	/** @return this node as a permission, or null if and only if {@linkplain #isCustomPermission()} returns false*/
+
+	/** @return this node as a permission, or null if it isn't one. */
 	public CustomPermission asCustomPermission() { return null; }
 }
