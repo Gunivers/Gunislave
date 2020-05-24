@@ -2,11 +2,9 @@ package net.gunivers.gunislave;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import fr.syl2010.utils.io.parser.UnixCommandLineParser;
 import fr.syl2010.utils.io.parser.UnixConfigParser;
@@ -39,7 +37,7 @@ public class BotConfig
 		String strDevelopperIds = config.getDefaultArguments("developpers_ids", "");
 
 		if (!strDevelopperIds.isEmpty())
-			developperIds.addAll(this.devIdsToSnowflake(strDevelopperIds));
+			developperIds.addAll(this.devIdsToSnowflakes(strDevelopperIds));
 		else
 			System.out.println("No developper id found in configuration!");
 
@@ -47,7 +45,7 @@ public class BotConfig
 		strDevelopperIds = argParser.getDefaultArguments("dev_ids", "");
 
 		if (!strDevelopperIds.isEmpty())
-			developperIds.addAll(this.devIdsToSnowflake(strDevelopperIds));
+			developperIds.addAll(this.devIdsToSnowflakes(strDevelopperIds));
 		else
 			System.out.println("No developper id provided in command line!");
 	}
@@ -55,8 +53,16 @@ public class BotConfig
 	private String getConfig(UnixCommandLineParser args, UnixConfigParser config, String argName, String configName, String orElse) {
 		return args.getDefaultArguments(argName, config.getDefaultArguments(configName, orElse)); }
 
-	private Set<Snowflake> devIdsToSnowflake(String developperIds) {
-		return Arrays.asList(developperIds.split(",")).stream().map(Snowflake::of).collect(Collectors.toSet()); }
+	private Set<Snowflake> devIdsToSnowflakes(String developperIds)
+	{
+		Set<Snowflake> snowflakes = new HashSet<>();
+		String[] ids = developperIds.split(",");
+
+		for (String id : ids)
+			snowflakes.add(Snowflake.of(id.trim()));
+
+		return snowflakes;
+	}
 
 	public String getToken() { return this.token; }
 	public Set<Snowflake> getDevelopperIds() { return this.developperIdsImmutable; }
