@@ -32,7 +32,7 @@ public class BotInstance
 			System.out.println("Build Discord Client...");
 			DiscordClientBuilder builder = new DiscordClientBuilder(config.getToken());
 
-			// En cas de déconnection imprévue, tente de se reconnecter à l'infini (1000 fois de suite)
+			// En cas de déconnection imprévue, tente de se reconnecter à l'infini (ie valeur maximale)
 			builder.setRetryOptions(new RetryOptions(Duration.ofSeconds(30), Duration.ofMinutes(1), Integer.MAX_VALUE, Schedulers.single()));
 			builder.setInitialPresence(Presence.doNotDisturb(Activity.watching("Démarrage...")));
 			this.botClient = builder.build();
