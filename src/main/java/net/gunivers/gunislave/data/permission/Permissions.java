@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.gunivers.gunislave.data.permission.custom.CustomPermission;
+import net.gunivers.gunislave.util.trees.RootManager;
 
 import discord4j.core.object.util.Permission;
 
@@ -23,9 +23,19 @@ public interface Permissions
 		}
 	});
 
-	static void initialize()
-	{
-	}
+	RootManager<PermissionNode, PermissionRoot> CUSTOM = new RootManager<>(PermissionRoot::new);
+
+	/**
+	 * Part of the visitor pattern; the implementation should only call the corresponding PermissionHolder.grant(Permissions) method
+	 * @param holder a {@linkplain Permissible}
+	 */
+	void grant(Permissible holder);
+
+	/**
+	 * Part of the visitor pattern; the implementation should only call the corresponding PermissionHolder.revoke(Permissions) method
+	 * @param holder a {@linkplain Permissible}
+	 */
+	void revoke(Permissible holder);
 
 	int getLevel();
 
