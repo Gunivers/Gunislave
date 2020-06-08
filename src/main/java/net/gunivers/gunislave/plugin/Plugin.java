@@ -14,11 +14,15 @@ import java.util.Set;
 public class Plugin {
 
     private final URLClassLoader urlClassLoader;
-    private final String name;
-    private final Set<String> authors;
+    /** The name of the plugin */
+    public final String name;
+    /** A list of authors of the plugin */
+    public final Set<String> authors;
     private final Class<net.gunivers.net.Plugin> mainClass;
-    private final String version;
-    private final String description;
+    /** The version of the plugin */
+    public final String version;
+    /** The description of the plugin */
+    public final String description;
 
     Plugin(URLClassLoader urlClassLoader, Path fileName) {
         PluginYamlParser.PluginDescriptor descriptor = null;
@@ -44,6 +48,9 @@ public class Plugin {
         }
     }
 
+    /**
+     * Load the plugin by calling 'load' method of the main class.
+     */
     public void load() {
         Method method;
         try {

@@ -15,6 +15,12 @@ import java.util.stream.Collectors;
 
 public class PluginYamlParser {
 
+    /**
+     * Parse the plugin to a descriptor
+     * @param classLoader the class loader of the plugin
+     * @return a plugin descriptor
+     * @throws IOException if the plugin doesn't have a 'plugin.yml' file
+     */
     public static PluginDescriptor parse(URLClassLoader classLoader) throws IOException {
         //classLoader.getResource("plugin.yml").getFile().chars().forEach(c -> System.out.print((char)c));
         InputStream test = classLoader.getResourceAsStream("plugin.yml");
@@ -24,6 +30,9 @@ public class PluginYamlParser {
         return descriptor;
     }
 
+    /**
+     * A descriptor for the plugin
+     */
     static class PluginDescriptor {
         String name;
         Set<String> authors;
