@@ -12,14 +12,23 @@ plugins
 	id 'eclipse'
 }
 
-sourceCompatibility = "8"
+sourceCompatibility = "14"
 compileJava.options.encoding = "UTF-8"
 
 repositories
 {
 	jcenter()
 	maven { url 'http://maven.syl2010.fr/artifactory/Public/' }
-	maven { url = uri('https://maven.pkg.github.com/az-0/Utilities') }
+
+	maven
+			{
+				name = 'GitHubPackages'
+				url = uri('https://maven.pkg.github.com/az-0/Utilities')
+				credentials {
+					username = System.getenv("GIT_USERNAME")
+					password = System.getenv("GIT_TOKEN")
+				}
+			}
 }
 
 dependencies
@@ -29,9 +38,12 @@ dependencies
 	testImplementation 'junit:junit:4.12'
 
 	implementation group: 'fr.syl2010', name: 'Utils', version: '1.4'
-	
-	//Little parsing api
-	compile 'fr.az.util:Utilities:1.0'
+
+	compile 'fr.az.util:Utilities:1.1'
+	compile fileTree(include: ['*.jar'], dir: 'libs')
+	compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.11.0'
+
+
 }
 
 // Define the main class for the application

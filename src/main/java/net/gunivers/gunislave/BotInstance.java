@@ -6,8 +6,10 @@ import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.event.EventDispatcher;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
+import discord4j.core.object.entity.MessageChannel;
 import discord4j.core.object.presence.Activity;
 import discord4j.core.object.presence.Presence;
+import discord4j.core.object.util.Snowflake;
 import discord4j.gateway.retry.RetryOptions;
 import reactor.core.scheduler.Schedulers;
 
@@ -75,7 +77,7 @@ public class BotInstance
 	public void shutdown()
 	{
 		if (this.botClient.isConnected())
-			this.botClient.logout().subscribe();
+			this.botClient.logout().block();
 		else
 			throw new IllegalStateException("The client is not connected!");
 	}
