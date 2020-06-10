@@ -1,0 +1,7 @@
+{
+    "stop": {
+        "description": "Stop the bot.",
+        "permissions": [],
+        "execute": "stop"
+    }
+}
