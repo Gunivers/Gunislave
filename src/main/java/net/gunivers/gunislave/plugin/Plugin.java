@@ -1,64 +1,71 @@
 package net.gunivers.gunislave.plugin;
 
-import discord4j.core.DiscordClient;
-import net.gunivers.gunislave.Main;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URISyntaxException;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.Set;
 
-public class Plugin {
+import net.gunivers.gunislave.Main;
+import net.gunivers.gunislave.plugin.PluginYamlParser.PluginDescriptor;
 
-    private final URLClassLoader urlClassLoader;
-    /** The name of the plugin */
-    public final String name;
-    /** A list of authors of the plugin */
-    public final Set<String> authors;
-    private final Class<net.gunivers.net.Plugin> mainClass;
-    /** The version of the plugin */
-    public final String version;
-    /** The description of the plugin */
-    public final String description;
+public class Plugin
+{
+	@SuppressWarnings("unchecked")
+	public static Optional<Plugin> load(URLClassLoader loader, Path file) throws InvalidPluginException
+	{
+		PluginDescriptor descriptor;
 
-    Plugin(URLClassLoader urlClassLoader, Path fileName) {
-        PluginYamlParser.PluginDescriptor descriptor = null;
-        try {
-            descriptor = PluginYamlParser.parse(urlClassLoader);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new InvalidPluginException(String.format("'plugin.yml' not found in %s.", fileName));
-        }
+		try
+		{
+			descriptor = PluginYamlParser.parse(loader);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+			throw new InvalidPluginException(String.format("'plugin.yml' not found in %s.", file));
+		}
 
-        Class<net.gunivers.net.Plugin> tempClazz = null;
-        try {
-            tempClazz = (Class<net.gunivers.net.Plugin>) Class.forName(descriptor.main_class, true, urlClassLoader);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            this.mainClass = tempClazz;
-            this.urlClassLoader = urlClassLoader;
-            this.name = descriptor.name;
-            this.authors = descriptor.authors;
-            this.version = descriptor.version;
-            this.description = descriptor.description;
-        }
-    }
+		net.gunivers.net.Plugin plugin;
 
-    /**
-     * Load the plugin by calling 'load' method of the main class.
-     */
-    public void load() {
-        Method method;
-        try {
-            method = mainClass.getDeclaredMethod("load", DiscordClient.class);
-            Object instance = mainClass.getConstructor().newInstance();
-            method.invoke(instance, Main.getBotInstance().getBotClient());
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-    }
+		try
+		{
+			Class<? extends net.gunivers.net.Plugin> clazz = (Class<? extends net.gunivers.net.Plugin>) Class.forName(descriptor.main_class, true, loader);
+			plugin = clazz.getConstructor().newInstance();
+			plugin.load(Main.getBotInstance().getBotClient());
+		}
+		catch (ClassCastException | ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e)
+		{
+			throw new InvalidPluginException(e.getMessage());
+		}
+		catch (Throwable t) // A single plugin crashing while loading should not make the whole instance crash
+		{
+			t.printStackTrace();
+			return Optional.empty();
+		}
+
+		return Optional.of(new Plugin(plugin, descriptor));
+	}
+
+	/** The name of the plugin */
+	private final String name;
+	/** A list of authors of the plugin */
+	private final Set<String> authors;
+	/** The version of the plugin */
+	private final String version;
+	/** The description of the plugin */
+	private final String description;
+
+	private Plugin(net.gunivers.net.Plugin plugin, PluginDescriptor metadata)
+	{
+		this.name = metadata.name;
+		this.authors = metadata.authors;
+		this.version = metadata.version;
+		this.description = metadata.description;
+	}
+
+	public String name() { return this.name; }
+	public String version() { return this.version; }
+	public String description() { return this.description; }
+	public Set<String> authors() { return this.authors; }
 }
