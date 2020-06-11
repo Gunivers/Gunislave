@@ -6,8 +6,8 @@ import net.gunivers.gunislave.Main;
 
 public class StopCommand extends Command {
 
-    public void stop(MessageCreateEvent e) {
-        e.getMessage().getChannel().flatMap(messageChannel -> messageChannel.createMessage("Extinction du bot.")).subscribe();
+    public void stop(MessageCreateEvent messageCreateEvent) {
+        messageCreateEvent.getMessage().getChannel().flatMap(messageChannel -> messageChannel.createMessage("Extinction du bot.")).subscribe();
         Main.getBotInstance().shutdown();
     }
 

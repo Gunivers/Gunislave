@@ -11,6 +11,7 @@ public class CommandInitiator {
     public static void initialize() {
         // Definition of the command prefix
         Configuration.setPrefix(",");
+        Configuration.setDebug(true);
 
         // Definition of the package where commands classes are
         CommandParser.parseCommands("net.gunivers.gunislave.command.commands");
