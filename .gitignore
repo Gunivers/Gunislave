@@ -39,3 +39,9 @@ proguard/
 *.ipr
 *.iws
 .idea/
+
+src/main/java/net/gunivers/gunislave/command/commands/TestCommand.java
+src/main/resources/commands/Test.jc
+
+
+
