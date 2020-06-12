@@ -32,6 +32,7 @@ dependencies
 	implementation group: 'fr.syl2010', name: 'Utils', version: '1.4'
 
 	extra 'c3p0:c3p0:0.9.1.2'
+	extra 'io.projectreactor:reactor-core:3.3.4.RELEASE'
 
 	compile fileTree(include: ['*.jar'], dir: 'libs')
 	compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.11.0'
