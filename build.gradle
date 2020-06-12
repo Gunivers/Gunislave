@@ -10,41 +10,36 @@ plugins
 	id 'java'
 	id 'application'
 	id 'eclipse'
+	id 'idea'
 }
 
-sourceCompatibility = "14"
+sourceCompatibility = 14
+targetCompatibility = 14
 compileJava.options.encoding = "UTF-8"
+
+configurations { extra }
 
 repositories
 {
 	jcenter()
+	mavenCentral()
 	maven { url 'http://maven.syl2010.fr/artifactory/Public/' }
-
-	maven
-			{
-				name = 'GitHubPackages'
-				url = uri('https://maven.pkg.github.com/az-0/Utilities')
-				credentials {
-					username = System.getenv("GIT_USERNAME")
-					password = System.getenv("GIT_TOKEN")
-				}
-			}
 }
 
 dependencies
 {	
 	implementation 'com.discord4j:discord4j-core:3.0.12'
-	
-	testImplementation 'junit:junit:4.12'
-
 	implementation group: 'fr.syl2010', name: 'Utils', version: '1.4'
 
-	compile 'fr.az.util:Utilities:1.1'
+	extra 'c3p0:c3p0:0.9.1.2'
+
 	compile fileTree(include: ['*.jar'], dir: 'libs')
 	compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.11.0'
-
-
+	
+	configurations.implementation.extendsFrom(configurations.extra)
 }
+
+tasks.withType(Jar) { from { configurations.extra.collect { it.isDirectory() ? it : zipTree(it) } } }
 
 // Define the main class for the application
 mainClassName = 'net.gunivers.gunislave.Main'

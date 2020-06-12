@@ -2,12 +2,12 @@ package net.gunivers.gunislave.data.config;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Supplier;
 
+import net.gunivers.gunislave.util.CheckedFunction;
+import net.gunivers.gunislave.util.ParsingException;
 import net.gunivers.gunislave.util.TriConsumer;
 import net.gunivers.gunislave.util.trees.Node;
-
-import fr.az.util.parsing.ParsingException;
-import fr.az.util.parsing.SimpleParser;
 
 /**
  * This class intends to manage any configuration. A variable in a {@link DataObject} is deemed configurable as long as it is linked to an
@@ -38,7 +38,7 @@ public class Configuration<T> extends ConfigurationNode
 	public static final String TYPE_SNOWFLAKE = "ID";
 
 	private final Set<TriConsumer<Configuration<T>, T, T>> onValueChanged;
-	private final SimpleParser<T, ? extends ParsingException> parser;
+	private final CheckedFunction<String, T, ? extends ParsingException> parser;
 	private final String display;
 
 	private T defaultValue;
@@ -54,7 +54,7 @@ public class Configuration<T> extends ConfigurationNode
 	 * @see ConfigurationNode#createConfiguration(String, Parser, String, T)
 	 * @see ConfigurationNode#ConfigurationNode(ConfigurationNode, String)
 	 */
-	Configuration(Node<ConfigurationNode> parent, String name, SimpleParser<T, ? extends ParsingException> parser, String display, T value)
+	Configuration(Node<ConfigurationNode> parent, String name, CheckedFunction<String, T, ? extends ParsingException> parser, String display, T value)
 	{
 		super(parent, name);
 		this.onValueChanged = new HashSet<>();
@@ -104,7 +104,7 @@ public class Configuration<T> extends ConfigurationNode
 	 * @see Configuration#setOr(String, T)
 	 * @see Configuration#setOrDefault(String)
 	 */
-	public void set(String input) throws ParsingException { this.setValue(this.parser.parse(input)); }
+	public void set(String input) throws ParsingException { this.setValue(this.parser.apply(input)); }
 
 	/**
 	 * Try to parse a value from String, then set this configuration's value to the parsed one.
@@ -114,7 +114,7 @@ public class Configuration<T> extends ConfigurationNode
 	 * @see Configuration#set(String)
 	 * @see Configuration#setOrDefault(String)
 	 */
-	public void setOr(String input, T value) { try { this.set(input); } catch (ParsingException e) { this.setValue(value); } }
+	public void setOr(String input, Supplier<T> value) { try { this.set(input); } catch (ParsingException e) { this.setValue(value.get()); } }
 
 	/**
 	 * Try to parse a value from String, then set this configuration's value to the parsed one.
@@ -122,7 +122,7 @@ public class Configuration<T> extends ConfigurationNode
 	 * @param input the parsable String
 	 * @see Configuration#setOr(String, T)
 	 */
-	public void setOrDefault(String input) { this.setOr(input, this.getDefaultValue()); }
+	public void setOrDefault(String input) { this.setOr(input, this::getDefaultValue); }
 
 	/**
 	 * Reset this configuration's value to default
@@ -131,7 +131,7 @@ public class Configuration<T> extends ConfigurationNode
 	public void reset() { this.setValue(this.getDefaultValue()); }
 
 	/** @return this configuration's parser */
-	public SimpleParser<T, ? extends ParsingException> getParser() { return this.parser; }
+	public CheckedFunction<String, T, ? extends ParsingException> getParser() { return this.parser; }
 
 	/** @return this configuration's displayed type */
 	public String getDisplayedType() { return this.display; }
@@ -150,6 +150,5 @@ public class Configuration<T> extends ConfigurationNode
 	/**
 	 * @return <code>this</code>
 	 */
-	@SuppressWarnings("unchecked")
 	@Override public Configuration<T> asConfiguration() { return this; }
 }

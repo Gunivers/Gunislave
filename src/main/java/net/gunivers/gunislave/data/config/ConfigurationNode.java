@@ -3,11 +3,10 @@ package net.gunivers.gunislave.data.config;
 import java.io.Serializable;
 import java.util.Optional;
 
+import net.gunivers.gunislave.util.CheckedFunction;
+import net.gunivers.gunislave.util.ParsingException;
 import net.gunivers.gunislave.util.trees.Node;
 import net.gunivers.gunislave.util.trees.NodeFactory;
-
-import fr.az.util.parsing.ParsingException;
-import fr.az.util.parsing.SimpleParser;
 
 /**
  * This class is a node within a {@linkplain ConfigurationTree}.
@@ -48,28 +47,26 @@ public class ConfigurationNode extends Node<ConfigurationNode> implements Serial
 	}
 
 	/**
-	 * Returns a {@linkplain Configuration} as this node's child, or null if a child with this name already exists.
-	 * To create a simple configuration node instead, please refer to {@linkplain ConfigurationNode#createChild(String)}
+	 * Returns a {@linkplain Configuration} as this node's child, or empty if a child with this name already exists.
+	 * To create a simple configuration node instead, refer to {@linkplain ConfigurationNode#createChild(String)}
 	 * @param name the child's string identifier
 	 * @param parser the child's parser
 	 * @param type the child's displayed type
 	 * @param defaultValue the child's default value
 	 * @return the child
 	 */
-	public <T> Configuration<T> getOrNewConfiguration(String localName, SimpleParser<T, ? extends ParsingException> parser, String type, T value)
+	public <T> Optional<Configuration<T>> newConfiguration(String localName, CheckedFunction<String, T, ? extends ParsingException> parser, String type, T value)
 	{
-		Optional<Configuration<T>> child = this.getConfiguration(localName);
+		if (this.hasChild(localName))
+			return Optional.empty();
 
-		if (!child.isPresent())
-			return new Configuration<>(this.getParent(), localName, parser, type, value);
-
-		return child.get();
+		return Optional.of(new Configuration<>(this.getParent(), localName, parser, type, value));
 	}
 
 	/**
 	 * @return this node's child as a configuration, or null if it doesn't exist or is a simple node
 	 */
-	public <T> Optional<Configuration<T>> getConfiguration(String localName)
+	public Optional<Configuration<?>> getConfiguration(String localName)
 	{
 		return this.getChild(localName).filter(ConfigurationNode::isConfiguration).map(ConfigurationNode::asConfiguration);
 	}
@@ -79,7 +76,7 @@ public class ConfigurationNode extends Node<ConfigurationNode> implements Serial
 	 * @return <code>null</code> by default
 	 * @see Configuration#asConfiguration()
 	 */
-	public <T> Configuration<T> asConfiguration() { return null; }
+	public Configuration<?> asConfiguration() { return null; }
 
 	/**
 	 * Return wether this node is a Configuration
