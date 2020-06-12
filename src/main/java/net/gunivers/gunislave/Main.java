@@ -1,11 +1,12 @@
 package net.gunivers.gunislave;
 
-import discord4j.core.event.domain.message.MessageCreateEvent;
-import discord4j.core.object.entity.MessageChannel;
-import discord4j.core.object.util.Snowflake;
-import fr.syl2010.utils.io.parser.UnixCommandLineParser;
 import net.gunivers.gunislave.command.CommandInitiator;
 import net.gunivers.gunislave.plugin.PluginManager;
+
+import fr.syl2010.utils.io.parser.UnixCommandLineParser;
+
+import discord4j.core.object.entity.MessageChannel;
+import discord4j.core.object.util.Snowflake;
 
 public class Main
 {

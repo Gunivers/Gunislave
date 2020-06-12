@@ -6,10 +6,8 @@ import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.event.EventDispatcher;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
-import discord4j.core.object.entity.MessageChannel;
 import discord4j.core.object.presence.Activity;
 import discord4j.core.object.presence.Presence;
-import discord4j.core.object.util.Snowflake;
 import discord4j.gateway.retry.RetryOptions;
 import reactor.core.scheduler.Schedulers;
 
@@ -27,27 +25,25 @@ public class BotInstance
 	{
 		this.config = config;
 
-		if (config.getToken() == null)
+		if (config.hasToken())
 			throw new IllegalArgumentException("Vous devez indiquez votre token en argument !");
-		else
+
+		System.out.println("Build Discord Client...");
+		DiscordClientBuilder builder = new DiscordClientBuilder(config.token());
+
+		// En cas de déconnection imprévue, tente de se reconnecter à l'infini (ie valeur maximale)
+		builder.setRetryOptions(new RetryOptions(Duration.ofSeconds(30), Duration.ofMinutes(1), Integer.MAX_VALUE, Schedulers.single()));
+		builder.setInitialPresence(Presence.doNotDisturb(Activity.watching("Démarrage...")));
+		this.botClient = builder.build();
+
+		EventDispatcher dispatcher = this.botClient.getEventDispatcher();
+
+		// Initializing Events (nécessaire pour l'initialisation du bots et de ses données)
+		dispatcher.on(ReadyEvent.class).take(1).subscribe(event ->
 		{
-			System.out.println("Build Discord Client...");
-			DiscordClientBuilder builder = new DiscordClientBuilder(config.getToken());
-
-			// En cas de déconnection imprévue, tente de se reconnecter à l'infini (ie valeur maximale)
-			builder.setRetryOptions(new RetryOptions(Duration.ofSeconds(30), Duration.ofMinutes(1), Integer.MAX_VALUE, Schedulers.single()));
-			builder.setInitialPresence(Presence.doNotDisturb(Activity.watching("Démarrage...")));
-			this.botClient = builder.build();
-
-			EventDispatcher dispatcher = this.botClient.getEventDispatcher();
-
-			// Initializing Events (nécessaire pour l'initialisation du bots et de ses données)
-			dispatcher.on(ReadyEvent.class).take(1).subscribe(event ->
-			{
-				// code éxécuté qu'une seule fois lorsque le bot est connecté à discord
-				this.botClient.updatePresence(Presence.online(Activity.listening("/help"))).subscribe();
-			});
-		}
+			// code éxécuté qu'une seule fois lorsque le bot est connecté à discord
+			this.botClient.updatePresence(Presence.online(Activity.listening("/help"))).subscribe();
+		});
 	}
 
 	/**
