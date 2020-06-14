@@ -1,0 +1,14 @@
+{
+    "test": {
+        "description": "Test",
+        "permissions": [],
+        "arguments": [
+            {
+                "type": "list<string>",
+                "tag": "test",
+                "keep_value": true, //test
+                "execute": "test"
+            }
+        ]
+    }
+}
