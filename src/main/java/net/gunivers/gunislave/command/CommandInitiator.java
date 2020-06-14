@@ -27,10 +27,14 @@ public class CommandInitiator
 			(
 				event -> Mono
 					.justOrEmpty(event.getMessage().getContent())
+					.filter(msg -> msg.startsWith(Configuration.getPrefix()))
 					.flatMap
 					(
-						msg -> Mono.justOrEmpty(CommandExecutor.isCommand(msg).map(cmd -> CommandExecutor.execute(cmd, event))
-						)
+						msg -> Mono.justOrEmpty(CommandExecutor.execute
+						(
+							msg.substring(Configuration.getPrefix().length()),
+							event
+						))
 					)
 			)
 			.subscribe();

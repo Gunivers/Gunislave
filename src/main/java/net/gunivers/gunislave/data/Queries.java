@@ -13,9 +13,14 @@ import reactor.core.scheduler.Schedulers;
 
 public class Queries
 {
-	// ╔═════════════════════════╗
-	// ║ DATABASE REACTIVE UTILS ║
-	// ╚═════════════════════════╝
+	public Mono<Void> save()
+	{
+		return Mono.empty();
+	}
+
+	//-----------------------
+	//DATABASE REACTIVE UTILS
+	//-----------------------
 
 	public static <C extends AutoCloseable> Mono<Void> close(C closeable)
 	{
@@ -29,7 +34,7 @@ public class Queries
 		return Mono.usingWhen
 		(
 			Database.connection(),
-			connection -> Mono.usingWhen
+			(Connection connection) -> Mono.usingWhen
 			(
 				Mono.fromCallable(() -> query.apply(connection)),
 				resultProvider,
@@ -57,7 +62,7 @@ public class Queries
 			statement -> Mono.usingWhen
 			(
 				Mono.fromCallable(() -> result.apply(statement)),
-				resultSet -> Mono.fromCallable(() -> mapper.apply(resultSet)),
+				(ResultSet resultSet) -> Mono.fromCallable(() -> mapper.apply(resultSet)),
 				Queries::close
 			)
 		);
