@@ -25,7 +25,7 @@ public class BotInstance
 	{
 		this.config = config;
 
-		if (config.hasToken())
+		if (!config.hasToken())
 			throw new IllegalArgumentException("Vous devez indiquez votre token en argument !");
 
 		System.out.println("Build Discord Client...");

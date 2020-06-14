@@ -8,6 +8,8 @@ import fr.syl2010.utils.io.parser.UnixCommandLineParser;
 import discord4j.core.object.entity.MessageChannel;
 import discord4j.core.object.util.Snowflake;
 
+import java.util.Arrays;
+
 public class Main
 {
 	private static BotInstance BOT_INSTANCE;
@@ -19,6 +21,7 @@ public class Main
 			BOT_INSTANCE = new BotInstance(new BotConfig(new UnixCommandLineParser(args)));
 		} catch (Throwable t)
 		{
+			System.out.println(t.getClass().getName());
 			System.out.println("Could not load configuration, shutting down: " + t.getMessage());
 			return;
 		}
