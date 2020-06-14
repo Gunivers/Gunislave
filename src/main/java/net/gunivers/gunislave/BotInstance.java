@@ -9,6 +9,7 @@ import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.object.presence.Activity;
 import discord4j.core.object.presence.Presence;
 import discord4j.gateway.retry.RetryOptions;
+import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 public class BotInstance
@@ -49,31 +50,18 @@ public class BotInstance
 	/**
 	 * Connecte le bot en bloquant le thread
 	 */
-	public void loginBlock()
+	public Mono<Void> login()
 	{
 		if (!this.botClient.isConnected())
-			this.botClient.login().block();
+			return this.botClient.login();
 		else
 			throw new IllegalStateException("The client is already connected!");
 	}
 
-	/**
-	 * Connecte le bot en libérant le thread.<br>
-	 * ATTENTION : Tout les threads créé par le bot sont des daemons. Si le thread
-	 * principal meurt, la jvm s'arrète !
-	 */
-	public void loginSubscribe()
-	{
-		if (!this.botClient.isConnected())
-			this.botClient.login().subscribe();
-		else
-			throw new IllegalStateException("The client is already connected!");
-	}
-
-	public void shutdown()
+	public Mono<Void> shutdown()
 	{
 		if (this.botClient.isConnected())
-			this.botClient.logout().block();
+			return this.botClient.logout();
 		else
 			throw new IllegalStateException("The client is not connected!");
 	}

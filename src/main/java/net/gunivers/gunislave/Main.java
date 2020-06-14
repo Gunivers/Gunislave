@@ -33,7 +33,7 @@ public class Main
 
 		PluginManager.loadPlugins();
 
-		BOT_INSTANCE.loginBlock(); // lance le bot en bloquant le thread principal
+		BOT_INSTANCE.login().block(); // lance le bot en bloquant le thread principal
 
 	}
 
