@@ -3,6 +3,7 @@ package net.gunivers.gunislave.util.trees;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -62,7 +63,7 @@ public class RootManager<N extends Node<N>, R extends RootNode<N>>
 	 * @see Node#navigate(String, Function)
 	 * @see Node#getFullName()
 	 */
-	public Optional<N> navigate(String fullName, Function<String, N> navigator)
+	public Optional<N> navigate(String fullName, BiFunction<Node<N>, String, Optional<N>> navigator)
 	{
 		String path = this.toPath(fullName);
 

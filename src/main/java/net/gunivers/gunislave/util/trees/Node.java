@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -60,7 +61,7 @@ public class Node<N extends Node<N>> implements Serializable
 	 */
 	public Optional<N> makePath(String path)
 	{
-		return this.navigate(path, this::getOrNewChild);
+		return this.navigate(path, (node, name) -> Optional.of(node.getOrNewChild(name)));
 	}
 
 	/**
@@ -73,13 +74,15 @@ public class Node<N extends Node<N>> implements Serializable
 	 */
 	public Optional<N> getNode(String path)
 	{
-		return this.navigate(path, name -> this.getChild(name).orElse(null));
+		return this.navigate(path, Node::getChild);
 	}
 
 	/**
 	 * Navigates within the tree to the target from this node.
+	 * If at any point the navigation completes empty, returns an empty optional (ie navigation failure)
+	 *
 	 * <p>
-	 * <strong>Special Case:</strong>
+	 * <strong>Edge Case:</strong>
 	 * <br> • If the path is empty, return an empty Optional
 	 *
 	 * @param path the path to the target from this node.
@@ -88,20 +91,23 @@ public class Node<N extends Node<N>> implements Serializable
 	 * @see Node#getNode(String)
 	 * @see Node#makePath(String)
 	 */
-	public Optional<N> navigate(String path, Function<String, N> navigator)
+	public Optional<N> navigate(String path, BiFunction<Node<N>, String, Optional<N>> navigator)
 	{
 		String[] parts = path.split("\\.");
-		N node = null;
 
-		for (String part : parts)
+		if (parts.length == 0) //Cannot initialize navigation
+			return Optional.empty();
+
+		//Handle first part of the navigation
+		Optional<N> node = navigator.apply(this, parts[0]);
+
+		for (int i = 1; i < parts.length; i++)
 		{
-			node = navigator.apply(part);
-
-			if (node == null)
-				return Optional.empty();
+			final int index = i; //Needed because of java's lambda expression requiring final outer variables
+			node = node.flatMap(n -> navigator.apply(n, parts[index]));
 		}
 
-		return Optional.ofNullable(node);
+		return node;
 	}
 
 	/**
@@ -201,7 +207,7 @@ public class Node<N extends Node<N>> implements Serializable
 	 * <code><blockquote>
 	 * root ─ foo ─ node
 	 * </blockquote></code>
-	 * Lines '─' represent a parent ─ child liaison.
+	 * Lines '─' represent a parent ─ child link.
 	 * <p>
 	 * Note: A full name is computed upon instanciation and is then immutable, implying you cannot rename nodes and their local name is
 	 * immutable as well.
