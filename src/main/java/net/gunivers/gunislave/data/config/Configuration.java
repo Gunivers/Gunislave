@@ -23,19 +23,19 @@ public class Configuration<T> extends ConfigurationNode
 	private static final long serialVersionUID = 5367317026511873913L;
 
 	//Displayed types
-	public static final String TYPE_BOOLEAN = "Boolean";
-	public static final String TYPE_BYTE = "Byte";
-	public static final String TYPE_SHORT = "Short Integer";
-	public static final String TYPE_INT = "Integer";
-	public static final String TYPE_LONG = "Long Integer";
-	public static final String TYPE_FLOAT = "Decimal";
-	public static final String TYPE_DOUBLE = "Long Decimal";
-	public static final String TYPE_NUMBER = "Number";
-	public static final String TYPE_CHAR = "Character";
-	public static final String TYPE_STRING = "Characters Chain";
-	public static final String TYPE_LIST = "List";
-	public static final String TYPE_MAP = "Map";
-	public static final String TYPE_SNOWFLAKE = "ID";
+	public static final String BOOLEAN = "Boolean";
+	public static final String BYTE = "Byte";
+	public static final String SHORT = "Short Integer";
+	public static final String INT = "Integer";
+	public static final String LONG = "Long Integer";
+	public static final String FLOAT = "Decimal";
+	public static final String DOUBLE = "Long Decimal";
+	public static final String NUMBER = "Number";
+	public static final String CHAR = "Character";
+	public static final String STRING = "Characters";
+	public static final String LIST = "List";
+	public static final String MAP = "Map";
+	public static final String SNOWFLAKE = "ID";
 
 	private final Set<TriConsumer<Configuration<T>, T, T>> onValueChanged;
 	private final CheckedFunction<String, T, ? extends ParsingException> parser;
@@ -142,13 +142,6 @@ public class Configuration<T> extends ConfigurationNode
 	/** @return this configuration's value */
 	public T getValue() { return this.value; }
 
-	/**
-	 * @return <code>true</code>
-	 */
 	@Override public boolean isConfiguration() { return true; }
-
-	/**
-	 * @return <code>this</code>
-	 */
 	@Override public Configuration<T> asConfiguration() { return this; }
 }
