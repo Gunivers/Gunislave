@@ -31,8 +31,8 @@ dependencies
 	implementation 'com.discord4j:discord4j-core:3.0.12'
 	implementation group: 'fr.syl2010', name: 'Utils', version: '1.4'
 
-	extra 'c3p0:c3p0:0.9.1.2'
-	extra 'io.projectreactor:reactor-core:3.3.4.RELEASE'
+	extra 'io.r2dbc:r2dbc-pool:0.8.3.RELEASE'
+	extra 'dev.miku:0.8.1.RELEASE'
 
 	compile fileTree(include: ['*.jar'], dir: 'libs')
 	compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.11.0'

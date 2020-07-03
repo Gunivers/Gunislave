@@ -1,68 +1,78 @@
 package net.gunivers.gunislave.data;
 
-import java.beans.PropertyVetoException;
-import java.sql.Connection;
+import static io.r2dbc.spi.ConnectionFactoryOptions.DATABASE;
+import static io.r2dbc.spi.ConnectionFactoryOptions.DRIVER;
+import static io.r2dbc.spi.ConnectionFactoryOptions.HOST;
+import static io.r2dbc.spi.ConnectionFactoryOptions.PASSWORD;
+import static io.r2dbc.spi.ConnectionFactoryOptions.PORT;
+import static io.r2dbc.spi.ConnectionFactoryOptions.PROTOCOL;
+import static io.r2dbc.spi.ConnectionFactoryOptions.SSL;
+import static io.r2dbc.spi.ConnectionFactoryOptions.USER;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-
+import io.r2dbc.pool.ConnectionPool;
+import io.r2dbc.pool.ConnectionPoolConfiguration;
+import io.r2dbc.spi.Connection;
+import io.r2dbc.spi.ConnectionFactories;
+import io.r2dbc.spi.ConnectionFactory;
+import io.r2dbc.spi.ConnectionFactoryOptions;
 import reactor.core.publisher.Mono;
 
-public class Database
+public final class Database
 {
 	private static Database DB;
 
 	public static boolean init(DatabaseCredentials credentials)
 	{
 		if (DB != null)
-			throw new IllegalStateException("Database already initialized");
+			throw new IllegalStateException("DataBase already initialized");
 
-		System.out.println("[Database] Initializing...");
+		System.out.println("[DataBase] Initializing...");
 		DB = new Database();
 
-		boolean success = DB.connect(credentials);
+		boolean success = false;
+
+		try
+		{
+			success = DB.connect(credentials);
+		} catch (Throwable t)
+		{
+			t.printStackTrace();
+		}
 
 		if (success)
-			System.out.println("[Database] Initialized!");
+			System.out.println("[DataBase] Initialized!");
 		else
-			System.err.println("[Database] Couldn't connect to database");
+			System.err.println("[DataBase] Couldn't connect to database");
 
 		return success;
 	}
 
 	public static Database db() { return DB; }
-	public static Mono<Connection> connection() { return Database.db().getConnection(); }
+	static Mono<Connection> connection() { return DB.pool.create(); }
 
-	private ComboPooledDataSource dataSource;
-	private Mono<Connection> connection;
+	private ConnectionPool pool;
 
 	private boolean connect(DatabaseCredentials credentials)
 	{
-		try
-		{
-			this.dataSource = new ComboPooledDataSource();
-			this.dataSource.setDriverClass("com.mysql.jdbc.Driver");
-			this.dataSource.setJdbcUrl(credentials.toURI());
-			this.dataSource.setUser(credentials.user());
-			this.dataSource.setPassword(credentials.password());
-			this.dataSource.setMaxIdleTime(300000);
-			this.dataSource.setMaxPoolSize(15);
+		ConnectionFactory factory = ConnectionFactories.get(ConnectionFactoryOptions.builder()
+			.option(DRIVER, "mysql")
+			.option(PROTOCOL, "mysql")
+			.option(HOST, credentials.host())
+			.option(PORT, credentials.port())
+			.option(USER, credentials.user())
+			.option(PASSWORD, credentials.password())
+			.option(DATABASE, credentials.database())
+			.option(SSL, false)
+			.build());
 
-			this.connection = Mono.fromCallable(this.dataSource::getConnection);
-		} catch (PropertyVetoException e)
-		{
-			e.printStackTrace();
-			return false;
-		}
-
+		this.pool = new ConnectionPool(ConnectionPoolConfiguration.builder(factory).build());
 		return true;
 	}
 
 	public void disconnect()
 	{
-		System.out.println("[Database] Disconnecting...");
-		this.dataSource.close();
-		System.out.println("[Database] Disconnected!");
+		System.out.println("[DataBase] Disconnecting...");
+		this.pool.close();
+		System.out.println("[DataBase] Disconnected!");
 	}
-
-	public Mono<Connection> getConnection() { return this.connection; }
 }

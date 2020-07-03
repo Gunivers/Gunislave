@@ -1,15 +1,16 @@
 package net.gunivers.gunislave.data;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import net.gunivers.gunislave.util.CheckedFunction;
-
+import io.r2dbc.spi.Connection;
+import io.r2dbc.spi.Result;
+import io.r2dbc.spi.Row;
+import io.r2dbc.spi.RowMetadata;
+import io.r2dbc.spi.Statement;
+import io.r2dbc.spi.ValidationDepth;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 public class Queries
 {
@@ -17,49 +18,32 @@ public class Queries
 	// ║ DATABASE REACTIVE UTILS ║
 	// ╚═════════════════════════╝
 
-	public static <C extends AutoCloseable> Mono<Void> close(C closeable)
+	public static Mono<Void> close(AutoCloseable closeable)
 	{
 		return Mono.fromCallable(() -> { closeable.close(); return null; });
 	}
 
-	public static <T> Mono<T> queryBase(
-			CheckedFunction<Connection, PreparedStatement, SQLException> query,
-			Function<PreparedStatement, ? extends Mono<T>> resultProvider)
+	public static Mono<Result> query(Function<Connection, Statement> query)
 	{
-		return Mono.usingWhen
+		return Database.connection().flatMap
 		(
-			Database.connection(),
-			connection -> Mono.usingWhen
+			connection -> Mono.from(query.apply(connection).execute()).flatMap
 			(
-				Mono.fromCallable(() -> query.apply(connection)),
-				resultProvider,
-				Queries::close
-			),
-			Queries::close
-		).subscribeOn(Schedulers.elastic());
-	}
-
-	public static <T> Mono<T> query(
-			CheckedFunction<Connection, PreparedStatement, SQLException> query,
-			CheckedFunction<PreparedStatement, T, SQLException> result)
-	{
-		return Queries.queryBase(query, statement -> Mono.fromCallable(() -> result.apply(statement)));
-	}
-
-	public static <T> Mono<T> query(
-			CheckedFunction<Connection, PreparedStatement, SQLException> query,
-			CheckedFunction<PreparedStatement, ResultSet, SQLException> result,
-			CheckedFunction<ResultSet, T, SQLException> mapper)
-	{
-		return Queries.queryBase
-		(
-			query,
-			statement -> Mono.usingWhen
-			(
-				Mono.fromCallable(() -> result.apply(statement)),
-				resultSet -> Mono.fromCallable(() -> mapper.apply(resultSet)),
-				Queries::close
+				result ->
+					Mono.from(connection.validate(ValidationDepth.LOCAL))
+						.filter(validate -> validate)
+						.flatMap(validate -> Mono.when(connection.close()))
+						.thenReturn(result)
 			)
 		);
 	}
-}
+
+	public static <T> Mono<T> query(Function<Connection, Statement> query, BiFunction<Row, RowMetadata, T> mapper)
+	{
+		return Queries.query(query).flatMap(r -> Mono.from(r.map(mapper)));
+	}
+
+	public static <T> Flux<T> queryMany(Function<Connection, Statement> query, BiFunction<Row, RowMetadata, T> mapper)
+	{
+		return Queries.query(query).flatMapMany(r -> r.map(mapper));
+	}}
