@@ -15,7 +15,6 @@ import reactor.core.scheduler.Schedulers;
 public class BotInstance
 {
 	private DiscordClient botClient;
-	private BotConfig config;
 
 	/**
 	 * créé le bot à partir du token donné et l'initialise.
@@ -24,8 +23,6 @@ public class BotInstance
 	 */
 	public BotInstance(BotConfig config)
 	{
-		this.config = config;
-
 		if (config.hasToken())
 			throw new IllegalArgumentException("Vous devez indiquez votre token en argument !");
 
@@ -67,5 +64,4 @@ public class BotInstance
 	}
 
 	public DiscordClient getBotClient() { return this.botClient; }
-	public BotConfig getConfig() { return this.config; }
 }
