@@ -19,40 +19,38 @@ import reactor.core.publisher.Mono;
 
 public final class Database
 {
-	private static Database DB;
+	private static ConnectionPool POOL;
+	private static boolean INITIALIZED;
 
 	public static boolean init(DatabaseCredentials credentials)
 	{
-		if (DB != null)
+		if (INITIALIZED)
 			throw new IllegalStateException("DataBase already initialized");
 
 		System.out.println("[DataBase] Initializing...");
-		DB = new Database();
 
 		boolean success = false;
 
 		try
 		{
-			success = DB.connect(credentials);
+			success = Database.connect(credentials);
 		} catch (Throwable t)
 		{
 			t.printStackTrace();
 		}
 
 		if (success)
+		{
 			System.out.println("[DataBase] Initialized!");
+			INITIALIZED = true;
+		}
 		else
 			System.err.println("[DataBase] Couldn't connect to database");
 
 		return success;
 	}
 
-	public static Database db() { return DB; }
-	static Mono<Connection> connection() { return DB.pool.create(); }
-
-	private ConnectionPool pool;
-
-	private boolean connect(DatabaseCredentials credentials)
+	private static boolean connect(DatabaseCredentials credentials)
 	{
 		ConnectionFactory factory = ConnectionFactories.get(ConnectionFactoryOptions.builder()
 			.option(DRIVER, "mysql")
@@ -65,14 +63,16 @@ public final class Database
 			.option(SSL, false)
 			.build());
 
-		this.pool = new ConnectionPool(ConnectionPoolConfiguration.builder(factory).build());
+		POOL = new ConnectionPool(ConnectionPoolConfiguration.builder(factory).build());
 		return true;
 	}
 
-	public void disconnect()
+	public static void disconnect()
 	{
 		System.out.println("[DataBase] Disconnecting...");
-		this.pool.close();
+		POOL.close();
 		System.out.println("[DataBase] Disconnected!");
 	}
+
+	static Mono<Connection> connection() { return POOL.create(); }
 }

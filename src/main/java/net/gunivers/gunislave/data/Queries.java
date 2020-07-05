@@ -3,6 +3,7 @@ package net.gunivers.gunislave.data;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import discord4j.core.object.util.Snowflake;
 import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.Result;
 import io.r2dbc.spi.Row;
@@ -14,16 +15,23 @@ import reactor.core.publisher.Mono;
 
 public class Queries
 {
+	// ╔═════════════════════╗
+	// ║ PREPARED STATEMENTS ║
+	// ╚═════════════════════╝
+
+	private static Statement selectStatement(Connection connection, String table, Snowflake id, String... selected)
+	{
+		String query = String.format("SELECT %s FROM ? WHERE uid = UUID_TO_BIN(?);", String.join(", ", selected));
+		return connection.createStatement(query)
+				.bind(0, table)
+				.bind(1, id.asLong());
+	}
+
 	// ╔═════════════════════════╗
 	// ║ DATABASE REACTIVE UTILS ║
 	// ╚═════════════════════════╝
 
-	public static Mono<Void> close(AutoCloseable closeable)
-	{
-		return Mono.fromCallable(() -> { closeable.close(); return null; });
-	}
-
-	public static Mono<Result> query(Function<Connection, Statement> query)
+	private static Mono<Result> query(Function<Connection, Statement> query)
 	{
 		return Database.connection().flatMap
 		(
@@ -38,12 +46,12 @@ public class Queries
 		);
 	}
 
-	public static <T> Mono<T> query(Function<Connection, Statement> query, BiFunction<Row, RowMetadata, T> mapper)
+	private static <T> Mono<T> query(Function<Connection, Statement> query, BiFunction<Row, RowMetadata, T> mapper)
 	{
 		return Queries.query(query).flatMap(r -> Mono.from(r.map(mapper)));
 	}
 
-	public static <T> Flux<T> queryMany(Function<Connection, Statement> query, BiFunction<Row, RowMetadata, T> mapper)
+	private static <T> Flux<T> queryMany(Function<Connection, Statement> query, BiFunction<Row, RowMetadata, T> mapper)
 	{
 		return Queries.query(query).flatMapMany(r -> r.map(mapper));
 	}}
