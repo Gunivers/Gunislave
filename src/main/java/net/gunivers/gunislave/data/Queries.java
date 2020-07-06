@@ -13,6 +13,7 @@ import io.r2dbc.spi.ValidationDepth;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@SuppressWarnings("unused")
 public class Queries
 {
 	// ╔═════════════════════╗

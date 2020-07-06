@@ -13,8 +13,6 @@ import discord4j.core.object.util.Snowflake;
 
 public class BotConfig
 {
-	public static final String SQL_URL_FORMAT = "jdbc:mysql://%s/%s?serverTimezone=Europe/Paris&autoReconnect=true&failOverReadOnly=false&maxReconnects=3";
-
 	private final String token;
 	private final Set<Snowflake> developperIds;
 

@@ -2,7 +2,6 @@ package net.gunivers.gunislave;
 
 import java.time.Duration;
 
-import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.event.EventDispatcher;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
@@ -14,7 +13,7 @@ import reactor.core.scheduler.Schedulers;
 
 public class BotInstance
 {
-	private DiscordClient botClient;
+	private GuniBot bot;
 
 	/**
 	 * créé le bot à partir du token donné et l'initialise.
@@ -32,15 +31,15 @@ public class BotInstance
 		// En cas de déconnection imprévue, tente de se reconnecter à l'infini (ie valeur maximale)
 		builder.setRetryOptions(new RetryOptions(Duration.ofSeconds(30), Duration.ofMinutes(1), Integer.MAX_VALUE, Schedulers.single()));
 		builder.setInitialPresence(Presence.doNotDisturb(Activity.watching("Démarrage...")));
-		this.botClient = builder.build();
+		this.bot = new GuniBot(builder.build());
 
-		EventDispatcher dispatcher = this.botClient.getEventDispatcher();
+		EventDispatcher dispatcher = this.bot.getEventDispatcher();
 
 		// Initializing Events (nécessaire pour l'initialisation du bots et de ses données)
 		dispatcher.on(ReadyEvent.class).take(1).subscribe(event ->
 		{
 			// code éxécuté qu'une seule fois lorsque le bot est connecté à discord
-			this.botClient.updatePresence(Presence.online(Activity.listening("/help"))).subscribe();
+			this.bot.updatePresence(Presence.online(Activity.listening("/help"))).subscribe();
 		});
 	}
 
@@ -49,19 +48,19 @@ public class BotInstance
 	 */
 	public Mono<Void> login()
 	{
-		if (!this.botClient.isConnected())
-			return this.botClient.login();
+		if (!this.bot.isConnected())
+			return this.bot.login();
 		else
 			throw new IllegalStateException("The client is already connected!");
 	}
 
 	public Mono<Void> shutdown()
 	{
-		if (this.botClient.isConnected())
-			return this.botClient.logout();
+		if (this.bot.isConnected())
+			return this.bot.logout();
 		else
 			throw new IllegalStateException("The client is not connected!");
 	}
 
-	public DiscordClient getBotClient() { return this.botClient; }
+	public GuniBot getBotClient() { return this.bot; }
 }
