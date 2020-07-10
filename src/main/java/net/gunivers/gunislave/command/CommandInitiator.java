@@ -1,9 +1,10 @@
 package net.gunivers.gunislave.command;
 
+import net.gunivers.gunislave.Main;
+
 import fr.theogiraudet.json_command_parser.CommandExecutor;
 import fr.theogiraudet.json_command_parser.CommandParser;
 import fr.theogiraudet.json_command_parser.Configuration;
-import net.gunivers.gunislave.Main;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import reactor.core.publisher.Mono;
@@ -20,10 +21,9 @@ public class CommandInitiator
 		CommandParser.parseCommands("net.gunivers.gunislave.command.commands");
 
 		Main.getBotInstance().getBotClient().getEventDispatcher()
-				.on(MessageCreateEvent.class)
-				.map(
-						event -> { System.out.println(event.getMessage().getContent().get()); return 5; }
-						).subscribe();
+			.on(MessageCreateEvent.class)
+			.doOnNext(event -> System.out.println(event.getMessage().getContent().get()))
+			.subscribe();
 
 		final CommandExecutor executor = new CommandExecutor();
 

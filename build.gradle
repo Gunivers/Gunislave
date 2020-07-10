@@ -43,16 +43,23 @@ dependencies
 	implementation 'com.discord4j:discord4j-core:3.0.12'
 	implementation group: 'fr.syl2010', name: 'Utils', version: '1.4'
 
-	//extra 'io.r2dbc:r2dbc-pool:0.8.3.RELEASE'
-	//extra 'dev.miku:r2dbc-mysql:0.8.1.RELEASE'
-	extra 'c3p0:c3p0:0.9.1.2'
+	implementation fileTree(dir: 'libs', include: ['*.jar'])
+	implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.11.0'
+
+	extra 'io.r2dbc:r2dbc-pool:0.8.3.RELEASE'
+	extra 'dev.miku:r2dbc-mysql:0.8.1.RELEASE'
 	extra 'io.projectreactor:reactor-core:3.3.4.RELEASE'
 
-
-	compile fileTree(dir: 'libs', include: ['*.jar'])
-	compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.11.0'
-
 	configurations.implementation.extendsFrom(configurations.extra)
+	
+	constraints {
+		implementation ('io.projectreactor.netty:reactor-netty') {
+			version {
+				strictly '[1.8, 1.9['
+				prefer '0.8.14.RELEASE'
+			}
+		}
+	}
 }
 
 tasks.withType(Jar) { from { configurations.extra.collect { it.isDirectory() ? it : zipTree(it) } } }

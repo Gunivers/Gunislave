@@ -1,6 +1,6 @@
 package net.gunivers.gunislave.data;
 
-/*import java.util.function.BiFunction;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import discord4j.core.object.util.Snowflake;
@@ -34,6 +34,9 @@ public class Queries
 
 	private static Mono<Result> query(Function<Connection, Statement> query)
 	{
+		if (!Database.isInitialized())
+			return Mono.empty();
+
 		return Database.connection().flatMap
 		(
 			connection -> Mono.from(query.apply(connection).execute()).flatMap
@@ -55,5 +58,5 @@ public class Queries
 	private static <T> Flux<T> queryMany(Function<Connection, Statement> query, BiFunction<Row, RowMetadata, T> mapper)
 	{
 		return Queries.query(query).flatMapMany(r -> r.map(mapper));
-	}}
-*/
+	}
+}

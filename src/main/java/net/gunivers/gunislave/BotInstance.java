@@ -2,6 +2,8 @@ package net.gunivers.gunislave;
 
 import java.time.Duration;
 
+import net.gunivers.gunislave.data.Database;
+
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.event.EventDispatcher;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
@@ -22,25 +24,25 @@ public class BotInstance
 	 */
 	public BotInstance(BotConfig config)
 	{
-		if (!config.hasToken())
-			throw new IllegalArgumentException("Vous devez indiquez votre token en argument !");
-
 		System.out.println("Build Discord Client...");
 		DiscordClientBuilder builder = new DiscordClientBuilder(config.token());
 
-		// En cas de déconnection imprévue, tente de se reconnecter à l'infini (ie valeur maximale)
+		// Try infinite reconnection (ie maximal value)
 		builder.setRetryOptions(new RetryOptions(Duration.ofSeconds(30), Duration.ofMinutes(1), Integer.MAX_VALUE, Schedulers.single()));
-		builder.setInitialPresence(Presence.doNotDisturb(Activity.watching("Démarrage...")));
+		builder.setInitialPresence(Presence.doNotDisturb(Activity.watching("Launching...")));
 		this.bot = new GuniBot(builder.build());
+
+		if (Database.isEnabled() && !Database.init(config.credentials()))
+			throw new ExceptionInInitializerError("Could not initialize database");
 
 		EventDispatcher dispatcher = this.bot.getEventDispatcher();
 
-		// Initializing Events (nécessaire pour l'initialisation du bots et de ses données)
-		dispatcher.on(ReadyEvent.class).take(1).subscribe(event ->
-		{
-			// code éxécuté qu'une seule fois lorsque le bot est connecté à discord
-			this.bot.updatePresence(Presence.online(Activity.listening("/help"))).subscribe();
-		});
+		// Initializing Events (mandatory for bot initialization)
+		dispatcher
+			.on(ReadyEvent.class)
+			.take(1)
+			.flatMap(event -> this.bot.updatePresence(Presence.online(Activity.listening("/help"))))
+			.subscribe();
 	}
 
 	/**
