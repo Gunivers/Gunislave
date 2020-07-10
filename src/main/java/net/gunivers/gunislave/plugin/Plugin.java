@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.Set;
 
-import net.gunivers.gunislave.Main;
 import net.gunivers.gunislave.plugin.PluginYamlParser.PluginDescriptor;
 
 public class Plugin
