@@ -1,0 +1,37 @@
+{
+    "if": {
+        "description": "Execute 'command1' if 'condition' is true, else execute 'command2'.",
+        "permissions": [],
+        "arguments": [
+            {
+                "type": "boolean",
+                "tag": "condition",
+                "keep_value": true,
+                "arguments": [
+                    {
+
+                        "type": "string...",
+                        "tag": "command1",
+                        "keep_value": true,
+                        "execute": "ifs",
+                        "arguments": [
+                            {
+                                "type": "string",
+                                "matches": "else",
+                                "tag": "else",
+                                "arguments": [
+                                    {
+                                        "type": "string...",
+                                        "tag": "command2",
+                                        "keep_value": true,
+                                        "execute": "ifElse"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

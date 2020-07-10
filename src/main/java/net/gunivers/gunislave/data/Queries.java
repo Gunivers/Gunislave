@@ -1,6 +1,6 @@
 package net.gunivers.gunislave.data;
 
-import java.util.function.BiFunction;
+/*import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import discord4j.core.object.util.Snowflake;
@@ -56,3 +56,4 @@ public class Queries
 	{
 		return Queries.query(query).flatMapMany(r -> r.map(mapper));
 	}}
+*/

@@ -32,7 +32,7 @@ public class Plugin
 		{
 			Class<? extends net.gunivers.net.Plugin> clazz = (Class<? extends net.gunivers.net.Plugin>) Class.forName(descriptor.main_class, true, loader);
 			plugin = clazz.getConstructor().newInstance();
-			plugin.load(Main.getBotInstance().getBotClient());
+			//plugin.load(Main.getBotInstance().getBotClient());
 		}
 		catch (ClassCastException | ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e)
 		{

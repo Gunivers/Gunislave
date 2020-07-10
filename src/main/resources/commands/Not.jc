@@ -1,0 +1,15 @@
+{
+    "negate": {
+        "description": "Return the negation of 'condition'.",
+        "permissions": [],
+        "pipe_restriction": "fb",
+        "arguments": [
+            {
+                "type": "boolean",
+                "tag": "condition",
+                "keep_value": true,
+                "execute": "negate"
+            }
+        ]
+    }
+}

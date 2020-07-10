@@ -8,6 +8,8 @@ import fr.syl2010.utils.io.parser.UnixCommandLineParser;
 import discord4j.core.object.entity.MessageChannel;
 import discord4j.core.object.util.Snowflake;
 
+import java.util.Arrays;
+
 public class Main
 {
 	private static BotInstance BOT_INSTANCE;
@@ -28,7 +30,7 @@ public class Main
 		BOT_INSTANCE.getBotClient().getGuildById(Snowflake.of("379308111774875648"))
 				.flatMap(g -> g.getChannelById(Snowflake.of("572008562331746334")))
 				.cast(MessageChannel.class)
-				.flatMap(c -> c.createMessage("Bot démarré !"))
+				.flatMap(c -> c.createMessage("Bot démarré ! " + BOT_INSTANCE.getBotClient().isConnected()))
 				.subscribe();
 
 		PluginManager.loadPlugins();

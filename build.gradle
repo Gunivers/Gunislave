@@ -17,6 +17,18 @@ sourceCompatibility = 14
 targetCompatibility = 14
 compileJava.options.encoding = "UTF-8"
 
+tasks.withType(JavaCompile) {
+	options.compilerArgs += "--enable-preview"
+}
+
+tasks.withType(Test) {
+	jvmArgs += "--enable-preview"
+}
+
+tasks.withType(JavaExec) {
+	jvmArgs += '--enable-preview'
+}
+
 configurations { extra }
 
 repositories
@@ -31,12 +43,15 @@ dependencies
 	implementation 'com.discord4j:discord4j-core:3.0.12'
 	implementation group: 'fr.syl2010', name: 'Utils', version: '1.4'
 
-	extra 'io.r2dbc:r2dbc-pool:0.8.3.RELEASE'
-	extra 'dev.miku:0.8.1.RELEASE'
+	//extra 'io.r2dbc:r2dbc-pool:0.8.3.RELEASE'
+	//extra 'dev.miku:r2dbc-mysql:0.8.1.RELEASE'
+	extra 'c3p0:c3p0:0.9.1.2'
+	extra 'io.projectreactor:reactor-core:3.3.4.RELEASE'
 
-	compile fileTree(include: ['*.jar'], dir: 'libs')
+
+	compile fileTree(dir: 'libs', include: ['*.jar'])
 	compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.11.0'
-	
+
 	configurations.implementation.extendsFrom(configurations.extra)
 }
 

@@ -18,11 +18,11 @@ public class BotInstance
 	/**
 	 * créé le bot à partir du token donné et l'initialise.
 	 *
-	 * @param BotConfig la configuration du bot.
+	 * @param config la configuration du bot.
 	 */
 	public BotInstance(BotConfig config)
 	{
-		if (config.hasToken())
+		if (!config.hasToken())
 			throw new IllegalArgumentException("Vous devez indiquez votre token en argument !");
 
 		System.out.println("Build Discord Client...");

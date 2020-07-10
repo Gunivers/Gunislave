@@ -1,0 +1,15 @@
+{
+    "is_present": {
+        "description": "Return true if the specified user is present.",
+        "permissions": [],
+        "pipe_restriction": "fib",
+        "arguments": [
+            {
+                "type": "string",
+                "tag": "user",
+                "keep_value": true,
+                "execute": "isPresent"
+            }
+        ]
+    }
+}

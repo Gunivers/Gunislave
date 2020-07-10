@@ -1,25 +1,22 @@
 package net.gunivers.gunislave.data;
 
-import static io.r2dbc.spi.ConnectionFactoryOptions.DATABASE;
+/*import static io.r2dbc.spi.ConnectionFactoryOptions.DATABASE;
 import static io.r2dbc.spi.ConnectionFactoryOptions.DRIVER;
 import static io.r2dbc.spi.ConnectionFactoryOptions.HOST;
 import static io.r2dbc.spi.ConnectionFactoryOptions.PASSWORD;
 import static io.r2dbc.spi.ConnectionFactoryOptions.PORT;
 import static io.r2dbc.spi.ConnectionFactoryOptions.PROTOCOL;
 import static io.r2dbc.spi.ConnectionFactoryOptions.SSL;
-import static io.r2dbc.spi.ConnectionFactoryOptions.USER;
+import static io.r2dbc.spi.ConnectionFactoryOptions.USER;*/
 
-import io.r2dbc.pool.ConnectionPool;
-import io.r2dbc.pool.ConnectionPoolConfiguration;
-import io.r2dbc.spi.Connection;
-import io.r2dbc.spi.ConnectionFactories;
-import io.r2dbc.spi.ConnectionFactory;
-import io.r2dbc.spi.ConnectionFactoryOptions;
-import reactor.core.publisher.Mono;
+//import io.r2dbc.pool.ConnectionPool;
+//import io.r2dbc.pool.ConnectionPool;
+//import io.r2dbc.pool.ConnectionPool;
+
 
 public final class Database
 {
-	private static ConnectionPool POOL;
+	//private static ConnectionPool POOL;
 	private static boolean INITIALIZED;
 
 	public static boolean init(DatabaseCredentials credentials)
@@ -52,7 +49,7 @@ public final class Database
 
 	private static boolean connect(DatabaseCredentials credentials)
 	{
-		ConnectionFactory factory = ConnectionFactories.get(ConnectionFactoryOptions.builder()
+		/*ConnectionFactory factory = ConnectionFactories.get(ConnectionFactoryOptions.builder()
 			.option(DRIVER, "mysql")
 			.option(PROTOCOL, "mysql")
 			.option(HOST, credentials.host())
@@ -61,18 +58,18 @@ public final class Database
 			.option(PASSWORD, credentials.password())
 			.option(DATABASE, credentials.database())
 			.option(SSL, false)
-			.build());
+			.build());*/
 
-		POOL = new ConnectionPool(ConnectionPoolConfiguration.builder(factory).build());
+		//POOL = new ConnectionPool(ConnectionPoolConfiguration.builder(factory).build());
 		return true;
 	}
 
 	public static void disconnect()
 	{
 		System.out.println("[DataBase] Disconnecting...");
-		POOL.close();
+		//POOL.close();
 		System.out.println("[DataBase] Disconnected!");
 	}
 
-	static Mono<Connection> connection() { return POOL.create(); }
+	//static Mono<Connection> connection() { return POOL.create(); }
 }

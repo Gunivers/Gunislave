@@ -2,6 +2,7 @@
     "stop": {
         "description": "Stop the bot.",
         "permissions": [],
+        "pipe_restriction": "o",
         "execute": "stop"
     }
 }
