@@ -41,7 +41,7 @@ repositories
 dependencies
 {	
 	implementation 'com.discord4j:discord4j-core:3.0.12'
-	implementation group: 'fr.syl2010', name: 'Utils', version: '1.4'
+	implementation group: 'fr.syl2010', name: 'Utils', version: '1.4.7'
 
 	implementation fileTree(dir: 'libs', include: ['*.jar'])
 	implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.11.0'
