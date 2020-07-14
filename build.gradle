@@ -35,7 +35,7 @@ repositories
 {
 	jcenter()
 	mavenCentral()
-	maven { url 'http://maven.syl2010.fr/artifactory/Public/' }
+	maven { url 'https://maven.syl2010.fr/artifactory/libs-release/' }
 }
 
 dependencies
